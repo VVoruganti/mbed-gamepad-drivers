@@ -3,6 +3,7 @@
 
 #include "USBHID.h"
 #include "PlatformMutex.h"
+#include "stdint.h"
 
 #define REPORT_ID_GAMEPAD 8
 
@@ -13,12 +14,12 @@ enum BUTTONS {
     YELLOW = 4,
     JOY_1 = 5,
     JOY_2 = 6
-}
+};
 
-enum JOYSTICKS = {
+enum JOYSTICKS {
     JOY_LEFT = 1,
     JOY_RIGHT = 2 
-}
+};
 
 /* X and Y limits */
 /* These values do not directly map to screen pixels */
@@ -35,7 +36,7 @@ enum JOYSTICKS = {
 
 class USBGamepad: public USBHID {
 public:
-    USBGamepad(bool connect_blocking = true, unint16_t vendor_id = 0x1234, unint16_t = 0x0001, unint16_t product_release = 0x0001); )
+    USBGamepad(bool connect_blocking = true, uint16_t vendor_id = 0x1234, uint16_t = 0x0001, uint16_t product_release = 0x0001);
 
     virtual ~USBGamepad();
 
@@ -45,26 +46,26 @@ public:
      * 
      * @returns true if there is no error, false otherwise
      */
-    bool update()
+    bool update();
     
     /**
      * Press one of several buttons
      * @param button button state (ex: press(GREEN))
      * @returns true if there is no error, false otherwise
      */
-    bool press(unint8_t button);
+    bool press(uint8_t button);
 
     /**
      * @param button button state (ex: press(GREEN))
      * @returns true if there is no error, false otherwise
      */
-    bool release(unint8_t button);
+    bool release(uint8_t button);
 
     /**
      * @param button button state (ex: press(GREEN))
      * @returns true if there is no error, false otherwise
      */
-    bool click(unint8_t button);
+    bool click(uint8_t button);
 
     /**
      * @returns true if there is no error, false otherwise
@@ -74,19 +75,19 @@ public:
      */
     bool joystick(uint8_t joy, uint8_t x, uint8_t y);
 
-    virtual const unint8_t *report_desc();
+    virtual const uint8_t *report_desc();
     
 protected:
 
-    virtual const unint8_t *configuration_desc(unint8_t index);
+    virtual const uint8_t *configuration_desc(uint8_t index);
 
 private:
     uint8_t _button;
     uint8_t _configuration_descriptor[41];
     PlatformMutex _mutex;
 
-    bool gamepad_send(int8_t x, int8_t y, unint8_t buttons, int8_t z);
+    bool gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z);
 
-}
+};
 
 #endif

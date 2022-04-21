@@ -1,9 +1,7 @@
-
-
 #include "USBGamepad.h"
+#include "stdint.h"
 
-
-USBGamepad::USBGamepad(bool connect_blocking, unint16_t vendor_id, unint16_t product_id, unint16_t product_release) : 
+USBGamepad::USBGamepad(bool connect_blocking, uint16_t vendor_id, uint16_t product_id, uint16_t product_release) : 
     USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
 {   
     _button = 0;
@@ -15,7 +13,7 @@ USBGamepad::USBGamepad(bool connect_blocking, unint16_t vendor_id, unint16_t pro
     }
 }
 
-USBMouse::USBGamepad(USBPhy *phy, uint16_t vendor_id, uint16_t product_id, uint16_t product_release):
+USBGamepad::USBGamepad(USBPhy *phy, uint16_t vendor_id, uint16_t product_id, uint16_t product_release):
     USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
 {
 }
@@ -29,29 +27,29 @@ bool USBGamepad::update()
 {
 }
 
-bool press(unint8_t button);
+bool press(uint8_t button);
 
-bool release(unint8_t button);
+bool release(uint8_t button);
 
-bool click(unint8_t button);
+bool click(uint8_t button);
 
-bool joystick(uint8_t joy, uint8_x x, uint8_t y);
+bool joystick(uint8_t joy, uint8_t x, uint8_t y);
 
 
-bool USBGamepad::gamepad_send();
+bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z);
 
-bool USBGamepad::click(unint8_t button)
+bool USBGamepad::click(uint8_t button)
 {
     _mutex.lock();
 
     if(!update()) {
-        bool ret = update(0,0,0,0)
+        bool ret = update();
     }
 
     return ret;
 }
 
-const unint8_t *USBGamepad::report_desc() 
+const uint8_t *USBGamepad::report_desc() 
 {
     // TODO check if need a report_id
     static const uint8_t report_descriptor[] = {
@@ -64,7 +62,7 @@ const unint8_t *USBGamepad::report_desc()
         REPORT_SIZE(1),     0x01,       // 1 bit each
         USAGE_PAGE(1),      0x09,       // Buttons
         USAGE_MINIMUM(1),       0x01,   // Button #1 
-        USAGE_MAXIMUM(1),       0x10,   // Button #16
+        USAGE_MAXIMUM(1),       0x06,   // Button #6
         LOGICAL_MINIMUM(1),     0x00,   // Minimum = 0 
         LOGICAL_MAXIMUM(1),     0x01,   // Maximum = 1
         INPUT(1),           0x02,       // INPUT type TODO check this INPUT(data,var,abs)
