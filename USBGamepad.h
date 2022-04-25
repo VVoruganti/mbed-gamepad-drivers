@@ -46,7 +46,7 @@ public:
      * 
      * @returns true if there is no error, false otherwise
      */
-    bool update();
+    bool update(int8_t x, int8_t y, uint8_t button, int8_t z, int8_t rx);
     
     /**
      * Press one of several buttons
@@ -86,7 +86,7 @@ private:
     uint8_t _configuration_descriptor[41];
     PlatformMutex _mutex;
 
-    bool gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z);
+    bool gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx);
 
 };
 

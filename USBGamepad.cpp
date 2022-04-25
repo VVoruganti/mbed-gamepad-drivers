@@ -1,5 +1,6 @@
 #include "USBGamepad.h"
 #include "stdint.h"
+#include "usb_phy_api.h"
 
 USBGamepad::USBGamepad(bool connect_blocking, uint16_t vendor_id, uint16_t product_id, uint16_t product_release) : 
     USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
@@ -23,31 +24,144 @@ USBGamepad::~USBGamepad()
     deinit();
 }
 
-bool USBGamepad::update()
+bool USBGamepad::update(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
 {
+    bool ret;
+    _mutex.lock();
+
+    while (x > 127) {
+        if (!gamepad_send(127, 0, buttons, 0, 0)) {
+            _mutex.unlock();
+            return false;
+        }
+        x = x - 127;
+    }
+    while (x < -128) {
+        if (!gamepad_send(-128, 0, buttons, 0, 0)) {
+            _mutex.unlock();
+            return false;
+        }
+        x = x + 128;
+    }
+    while (y > 127) {
+        if (!gamepad_send(0, 127, buttons, 0, 0)) {
+            _mutex.unlock();
+            return false;
+        }
+        y = y - 127;
+    }
+    while (y < -128) {
+        if (!gamepad_send(0, -128, buttons, 0, 0)) {
+            _mutex.unlock();
+            return false;
+        }
+        y = y + 128;
+    }
+    while (z > 127) {
+        if (!gamepad_send(0, 0, buttons, 127, 0)) {
+            _mutex.unlock();
+            return false;
+        }
+        z = z - 127;
+    }
+    while (z < -128) {
+        if (!gamepad_send(0, 0, buttons, -128, 0)) {
+            _mutex.unlock();
+            return false;
+        }
+        z = z + 128;
+    }
+    while (rx > 127) {
+        if (!gamepad_send(0, 0, buttons, 0, 127)) {
+            _mutex.unlock();
+            return false;
+        }
+        rx = rx - 127;
+    }
+    while (rx < -128) {
+        if (!gamepad_send(0, 0, buttons, 0, -128)) {
+            _mutex.unlock();
+            return false;
+        }
+        rx = rx + 128;
+    }
+    ret = gamepad_send(x, y, buttons, z, rx);
+
+    _mutex.unlock();
+    return ret;
+
 }
 
-bool press(uint8_t button);
+bool USBGamepad::press(uint8_t button)
+{
+    _mutex.lock();
+    _button = button & 0x0F; // Bit mask with 1111
 
-bool release(uint8_t button);
+    bool ret = update(0, 0, _button, 0, 0);
 
-bool click(uint8_t button);
+    _mutex.unlock();
+    return ret;
 
-bool joystick(uint8_t joy, uint8_t x, uint8_t y);
+}
 
-
-bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z);
-
-bool USBGamepad::click(uint8_t button)
+bool USBGamepad::release(uint8_t button)
 {
     _mutex.lock();
 
-    if(!update()) {
-        bool ret = update();
-    }
+    _button = (_button & (~button)) & 0x0F;
+    bool ret = update(0, 0, _button, 0, 0);
 
+    _mutex.unlock();
     return ret;
 }
+
+bool USBGamepad::click(uint8_t button) {
+    _mutex.lock();
+
+    if (!update(0, 0, button, 0, 0)) {
+        _mutex.unlock();
+        return false;
+    }
+    rtos::ThisThread::sleep_for(10ms);
+    bool ret = update(0, 0, 0, 0, 0);
+
+    _mutex.unlock();
+    return ret; 
+}
+
+bool USBGamepad::joystick(uint8_t joy, uint8_t x, uint8_t y) 
+{
+    bool ret;
+    _mutex.lock();
+    if (joy == JOY_LEFT) {
+        ret = update(x, y, _button, 0, 0);
+    } else {
+        ret = update(0, 0, _button, x, y);
+    }
+    _mutex.unlock();
+    return ret;
+}
+
+
+bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t button, int8_t z, int8_t rx) 
+{
+    _mutex.lock();
+    HID_REPORT report;
+
+    report.data[0] = buttons;
+    report.data[1] = x;
+    report.data[2] = y;
+    report.data[3] = z;
+    report.data[4] = rx;
+
+    report.length = 5;
+
+    bool ret = send(&report);
+
+    _mutex.unlock();
+    return ret;
+}
+
 
 const uint8_t *USBGamepad::report_desc() 
 {
@@ -76,7 +190,7 @@ const uint8_t *USBGamepad::report_desc()
         USAGE(1),           0x30,       // X
         USAGE(1),           0x31,       // Y
         USAGE(1),           0x32,       // Z
-        USAGE(1),           0x32,       // Rx
+        USAGE(1),           0x33,       // Rx
         LOGICAL_MINIMUM(1),     0x81,   // Logical Minimum (-127)
         LOGICAL_MAXIMUM(1),     0x7f,   // Logical Maximum (127)
         INPUT(1),           0x06,       // Relative data INPUT(data,var,rel)
