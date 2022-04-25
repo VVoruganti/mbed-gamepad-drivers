@@ -1,4 +1,4 @@
-Welcome to the mbed-gamepad-drivers wiki!    
+Welcome to the mbed-gamepad-drivers wiki!
 (ECE - 4180 Final Project) 
 
 Team Members:   
@@ -8,7 +8,7 @@ Joshua Chang
 
 Components:    
 Mbed    
-Buttons    
+SParkfun Pushbuttons    
 Sparkfun Thumb Joystick     
 
 Wiring:   
