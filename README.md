@@ -1,22 +1,25 @@
 Welcome to the mbed-gamepad-drivers wiki!
 (ECE - 4180 Final Project) 
 
-Team Members:   
+**Team Members:**   
 Vineeth Voruganti    
 Srikar Tallapragada    
 Joshua Chang
 
-Components:    
-Mbed    
-SParkfun Pushbuttons    
-Sparkfun Thumb Joystick     
+**Components:**    
+Mbed:
+![image](https://user-images.githubusercontent.com/55115625/165156167-0309541c-6c7b-47cb-8d9c-993f8ffe2a6e.png)
 
-Wiring:   
+Sparkfun Pushbuttons:
+![image](https://user-images.githubusercontent.com/55115625/165156036-b5e7fef8-fbd1-4be6-a94c-d572dda7a0df.png)
+
 Sparkfun Thumb Joystick:
+![pic](https://user-images.githubusercontent.com/55115625/165156073-c6d87b62-2bb1-4d99-9bc5-23f313190107.JPG)
 
-![Snip](https://user-images.githubusercontent.com/55115625/164071228-a6d525d9-9f87-42ee-b80d-b31d943a4a55.png)
+**Wiring:**   
+Sparkfun Thumb Joystick:
+![wiring](https://user-images.githubusercontent.com/55115625/165156106-d178d4de-5bc2-4867-8c88-ae914498e4c1.JPG)
 
-Pushbuttons:   
-    
+Pushbuttons:
 ![image](https://user-images.githubusercontent.com/55115625/163015386-f72815b7-37fd-4497-9429-6f359b494cf6.png)
 
