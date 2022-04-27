@@ -36,10 +36,25 @@ enum JOYSTICKS {
 
 class USBGamepad: public USBHID {
 public:
-    USBGamepad(bool connect_blocking = true, uint16_t vendor_id = 0x1234, uint16_t = 0x0001, uint16_t product_release = 0x0001);
+
+
+    /**
+    * Constructor
+    */
+    USBGamepad(uint16_t vendor_id = 0x1234, uint16_t product_id = 0x0002, uint16_t product_release = 0x0001):
+            USBHID(0, 0, vendor_id, product_id, product_release, false)
+            {
+                // button = 0;
+                // this->mouse_type = mouse_type;
+                init();
+                connect();
+            };
+            
+    // USBGamepad(uint16_t vendor_id = 0x1234, uint16_t = 0x0001, uint16_t product_release = 0x0001);
 
     virtual ~USBGamepad();
 
+    void init();
 
     /**
      * Write a state of the Gamepad
@@ -79,11 +94,11 @@ public:
     
 protected:
 
-    virtual const uint8_t *configuration_desc(uint8_t index);
+   //  virtual const uint8_t *configuration_desc(uint8_t index);
 
 private:
     uint8_t _button;
-    uint8_t _configuration_descriptor[41];
+    // uint8_t _configuration_descriptor[41];
     PlatformMutex _mutex;
 
     bool gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx);

@@ -1,27 +1,32 @@
 #include "USBGamepad.h"
-#include "stdint.h"
-#include "usb_phy_api.h"
+// #include "stdint.h"
+// #include "usb_phy_api.h"
 
-USBGamepad::USBGamepad(bool connect_blocking, uint16_t vendor_id, uint16_t product_id, uint16_t product_release) : 
-    USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
-{   
-    _button = 0;
-    if (connect_blocking) {
-        USBDevice::connect();
-        wait_ready();
-    } else {
-        init();
-    }
-}
+//USBGamepad::USBGamepad(bool connect_blocking, uint16_t vendor_id, uint16_t product_id, uint16_t product_release) : 
+//    USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
+//{   
+//    _button = 0;
+//    if (connect_blocking) {
+//        USBDevice::connect();
+//        wait_ready();
+//    } else {
+//        init();
+//    }
+//}
+//
+//USBGamepad::USBGamepad(USBPhy *phy, uint16_t vendor_id, uint16_t product_id, uint16_t product_release):
+//    USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
+//{
+//}
 
-USBGamepad::USBGamepad(USBPhy *phy, uint16_t vendor_id, uint16_t product_id, uint16_t product_release):
-    USBHID(get_usb_phy(), 0, 0, vendor_id, product_id, product_release)
-{
+void USBGamepad::init() {
+    
+   _button = 0x00;            
 }
 
 USBGamepad::~USBGamepad()
 {
-    deinit();
+    // deinit();
 }
 
 bool USBGamepad::update(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
@@ -122,7 +127,8 @@ bool USBGamepad::click(uint8_t button) {
         _mutex.unlock();
         return false;
     }
-    rtos::ThisThread::sleep_for(10ms);
+    // TODO 
+    // rtos::ThisThread::sleep_for(10ms);
     bool ret = update(0, 0, 0, 0, 0);
 
     _mutex.unlock();
@@ -143,7 +149,7 @@ bool USBGamepad::joystick(uint8_t joy, uint8_t x, uint8_t y)
 }
 
 
-bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t button, int8_t z, int8_t rx) 
+bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
 {
     _mutex.lock();
     HID_REPORT report;
