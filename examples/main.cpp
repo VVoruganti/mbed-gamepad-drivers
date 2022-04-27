@@ -3,8 +3,8 @@
 #include "USBGamepad.h"
 //#include "PinDetect.h"
 
-// USBGamepad gamepad;
-USBMouse mouse;
+USBGamepad gamepad;
+// USBMouse mouse;
 
 
 Serial pc(USBTX,USBRX);
@@ -41,16 +41,16 @@ int main(void)
     pb3.mode(PullUp);
     pb4.mode(PullUp);
     
-    led1 = 1;
+    // led1 = 1;
     
     while (1)
     {
         button = 0;
         
-        //pc.printf("| X1 %f |",AnalogXl.read());
-//        pc.printf("| Y1 %f |",AnalogYl.read());
-//        pc.printf("| X2 %f |",AnalogXr.read());
-//        pc.printf("| Y2 %f |\r\n",AnalogYr.read());    
+        pc.printf("| X1 %f |",AnalogXl.read());
+        pc.printf("| Y1 %f |",AnalogYl.read());
+        pc.printf("| X2 %f |",AnalogXr.read());
+        pc.printf("| Y2 %f |\r\n",AnalogYr.read());    
         
         if (!pb1) {
             button = button ^ 0x01;
@@ -59,31 +59,31 @@ int main(void)
             button = button ^ 0x02;
         }
         if (!pb3) {
-            button = button ^ 0x03;
-        }
-        if (!pb4) {
             button = button ^ 0x04;
         }
+        if (!pb4) {
+            button = button ^ 0x08;
+        }
         if (!pbjl) {
-            button = button ^ 0x05;
+            button = button ^ 0x10;
         }
         if (!pbjr) {
-            button = button ^ 0x06;
+            button = button ^ 0x20;
         }
         
-        // led1 = !pb1 || !pbjl;
-        // led2 = !pb2;
-        // led3 = !pb3; 
-        // led4 = !pb4 || !pbjr; 
+        led1 = !pb1 || !pbjl;
+        led2 = !pb2;
+        led3 = !pb3; 
+        led4 = !pb4 || !pbjr; 
         
         int8_t x = (AnalogXl.read() * 254 - 127);
         int8_t y = (AnalogYl.read() * 254 - 127);
         int8_t z = (AnalogXr.read() * 254 - 127);
         int8_t xr = (AnalogYr.read() * 254 - 127);
         
-        mouse.update(x, y, pb1, 0);
+ //       mouse.update(x, y, pb1, 0);
         
-        // gamepad.update(x, y, button, z, xr);    
+        gamepad.update(x, y, button, z, xr);    
         wait(0.001);    
 
     }

@@ -32,126 +32,108 @@ USBGamepad::~USBGamepad()
 bool USBGamepad::update(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
 {
     bool ret;
-    _mutex.lock();
 
     while (x > 127) {
         if (!gamepad_send(127, 0, buttons, 0, 0)) {
-            _mutex.unlock();
             return false;
         }
         x = x - 127;
     }
     while (x < -128) {
         if (!gamepad_send(-128, 0, buttons, 0, 0)) {
-            _mutex.unlock();
             return false;
         }
         x = x + 128;
     }
     while (y > 127) {
         if (!gamepad_send(0, 127, buttons, 0, 0)) {
-            _mutex.unlock();
             return false;
         }
         y = y - 127;
     }
     while (y < -128) {
         if (!gamepad_send(0, -128, buttons, 0, 0)) {
-            _mutex.unlock();
             return false;
         }
         y = y + 128;
     }
     while (z > 127) {
         if (!gamepad_send(0, 0, buttons, 127, 0)) {
-            _mutex.unlock();
             return false;
         }
         z = z - 127;
     }
     while (z < -128) {
         if (!gamepad_send(0, 0, buttons, -128, 0)) {
-            _mutex.unlock();
             return false;
         }
         z = z + 128;
     }
     while (rx > 127) {
         if (!gamepad_send(0, 0, buttons, 0, 127)) {
-            _mutex.unlock();
             return false;
         }
         rx = rx - 127;
     }
     while (rx < -128) {
         if (!gamepad_send(0, 0, buttons, 0, -128)) {
-            _mutex.unlock();
             return false;
         }
         rx = rx + 128;
     }
     ret = gamepad_send(x, y, buttons, z, rx);
 
-    _mutex.unlock();
     return ret;
 
 }
 
 bool USBGamepad::press(uint8_t button)
 {
-    _mutex.lock();
     _button = button & 0x0F; // Bit mask with 1111
 
     bool ret = update(0, 0, _button, 0, 0);
 
-    _mutex.unlock();
     return ret;
 
 }
 
 bool USBGamepad::release(uint8_t button)
 {
-    _mutex.lock();
 
     _button = (_button & (~button)) & 0x0F;
     bool ret = update(0, 0, _button, 0, 0);
-
-    _mutex.unlock();
+    
     return ret;
 }
 
 bool USBGamepad::click(uint8_t button) {
-    _mutex.lock();
 
     if (!update(0, 0, button, 0, 0)) {
-        _mutex.unlock();
         return false;
     }
+    wait(1);
     // TODO 
     // rtos::ThisThread::sleep_for(10ms);
     bool ret = update(0, 0, 0, 0, 0);
 
-    _mutex.unlock();
     return ret; 
 }
 
 bool USBGamepad::joystick(uint8_t joy, uint8_t x, uint8_t y) 
 {
     bool ret;
-    _mutex.lock();
+
     if (joy == JOY_LEFT) {
         ret = update(x, y, _button, 0, 0);
     } else {
         ret = update(0, 0, _button, x, y);
     }
-    _mutex.unlock();
     return ret;
 }
 
 
 bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
 {
-    _mutex.lock();
     HID_REPORT report;
 
     report.data[0] = buttons;
@@ -164,15 +146,14 @@ bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int
 
     bool ret = send(&report);
 
-    _mutex.unlock();
     return ret;
 }
 
 
-const uint8_t *USBGamepad::report_desc() 
+uint8_t *USBGamepad::reportDesc() 
 {
     // TODO check if need a report_id
-    static const uint8_t report_descriptor[] = {
+    static uint8_t report_descriptor[] = {
         USAGE_PAGE(1),      0x01,       // Generic Desktop
         USAGE(1),           0x05,       // Gamepad
         COLLECTION(1),      0x01,       // Application
@@ -199,7 +180,7 @@ const uint8_t *USBGamepad::report_desc()
         USAGE(1),           0x33,       // Rx
         LOGICAL_MINIMUM(1),     0x81,   // Logical Minimum (-127)
         LOGICAL_MAXIMUM(1),     0x7f,   // Logical Maximum (127)
-        INPUT(1),           0x06,       // Relative data INPUT(data,var,rel)
+        INPUT(1),           0x02,       // Relative data INPUT(data,var,abs)
 
         END_COLLECTION(0),
         END_COLLECTION(0),

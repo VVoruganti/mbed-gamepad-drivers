@@ -2,7 +2,6 @@
 #define USBGAMEPAD_H
 
 #include "USBHID.h"
-#include "PlatformMutex.h"
 #include "stdint.h"
 
 #define REPORT_ID_GAMEPAD 8
@@ -90,7 +89,7 @@ public:
      */
     bool joystick(uint8_t joy, uint8_t x, uint8_t y);
 
-    virtual const uint8_t *report_desc();
+    virtual uint8_t * reportDesc();
     
 protected:
 
@@ -99,7 +98,6 @@ protected:
 private:
     uint8_t _button;
     // uint8_t _configuration_descriptor[41];
-    PlatformMutex _mutex;
 
     bool gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx);
 
