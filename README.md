@@ -30,7 +30,7 @@ Sparkfun Thumb Joystick:
 
 Sparkfun USB Mini-B Breakout:
 
-![image](https://user-images.githubusercontent.com/55115625/165858493-4e185d5b-600d-4c7b-95ad-e78d11800800.png)
+![test](https://user-images.githubusercontent.com/55115625/165858588-faf845af-0f92-48aa-beb7-02a719414c2a.png)
 
 Pushbuttons:
 
