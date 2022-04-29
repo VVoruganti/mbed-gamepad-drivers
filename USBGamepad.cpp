@@ -19,20 +19,37 @@
 //{
 //}
 
+/**
+* Set button state to null
+* TODO make the driver more configurable by taking in the report descriptor
+*/
 void USBGamepad::init() {
     
    _button = 0x00;            
 }
 
+/**
+* Destructor
+*/
 USBGamepad::~USBGamepad()
 {
     // deinit();
 }
 
+/**
+* Update the state of the HID device and send it to the USB bus
+* @returns true if no error, else false
+* @param x - X axis
+* @param y - Y axis
+* @param buttons - all 6 buttons
+* @param z - Z axis
+* @param rx - X rotation axis
+*/
 bool USBGamepad::update(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
 {
     bool ret;
 
+    // Error Checking for all axis values
     while (x > 127) {
         if (!gamepad_send(127, 0, buttons, 0, 0)) {
             return false;
@@ -81,44 +98,65 @@ bool USBGamepad::update(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx
         }
         rx = rx + 128;
     }
-    ret = gamepad_send(x, y, buttons, z, rx);
+    ret = gamepad_send(x, y, buttons, z, rx); // Send data
 
-    return ret;
+    return ret; // Return status
 
 }
 
+/**
+* Helper function to press a button
+* @returns true if no error, else false
+* @param button to press
+*/
 bool USBGamepad::press(uint8_t button)
 {
     _button = button & 0x0F; // Bit mask with 1111
 
-    bool ret = update(0, 0, _button, 0, 0);
+    bool ret = update(0, 0, _button, 0, 0); // send button state
 
     return ret;
 
 }
 
+/**
+* Helper function release a button
+* @returns true if no error, else false
+* @param button to release
+*/
 bool USBGamepad::release(uint8_t button)
 {
 
-    _button = (_button & (~button)) & 0x0F;
-    bool ret = update(0, 0, _button, 0, 0);
+    _button = (_button & (~button)) & 0x0F; // bit mask
+    bool ret = update(0, 0, _button, 0, 0); // send state
     
-    return ret;
+    return ret; // return status
 }
 
+/**
+* Shorthand function that combines press and release
+* @returns true if no error, else false
+* @param button to click
+*/
 bool USBGamepad::click(uint8_t button) {
 
     if (!update(0, 0, button, 0, 0)) {
         return false;
     }
     wait(1);
-    // TODO 
     // rtos::ThisThread::sleep_for(10ms);
     bool ret = update(0, 0, 0, 0, 0);
 
     return ret; 
 }
 
+/**
+* Helper function for updating joystick state
+* @returns true if no error, else false
+* @param joy - enum value to select joystick
+* @param x - x axis value
+* @param y - y axis value
+*/
 bool USBGamepad::joystick(uint8_t joy, uint8_t x, uint8_t y) 
 {
     bool ret;
@@ -131,25 +169,38 @@ bool USBGamepad::joystick(uint8_t joy, uint8_t x, uint8_t y)
     return ret;
 }
 
-
+/**
+* Primary function for sending HID reports
+* @returns true if no error, else false
+* @param x - X axis
+* @param y - Y axis
+* @param buttons - button states
+* @param z - Z axis
+* @param rx - X rotation axis
+*/
 bool USBGamepad::gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx) 
 {
-    HID_REPORT report;
+    HID_REPORT report; // inhereted report type
 
-    report.data[0] = buttons;
+    report.data[0] = buttons; // 1 byte for all 6 buttons (2 are dummy values)
+    // 1 byte of data for each axis
     report.data[1] = x;
     report.data[2] = y;
     report.data[3] = z;
     report.data[4] = rx;
 
-    report.length = 5;
+    report.length = 5; // 5 bytes
 
-    bool ret = send(&report);
+    bool ret = send(&report); // Send over USB connection
 
-    return ret;
+    return ret; // return status
 }
 
-
+/**
+* Hard coded report descriptor can make this more configurable
+* by changing the constructor and location of the definition
+* @returns pointer to report descriptor definition
+*/
 uint8_t *USBGamepad::reportDesc() 
 {
     // TODO check if need a report_id

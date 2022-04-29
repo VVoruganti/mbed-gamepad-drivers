@@ -89,6 +89,9 @@ public:
      */
     bool joystick(uint8_t joy, uint8_t x, uint8_t y);
 
+    /**
+    * @returns a pointer to the report descriptor   
+    */
     virtual uint8_t * reportDesc();
     
 protected:
@@ -96,9 +99,17 @@ protected:
    //  virtual const uint8_t *configuration_desc(uint8_t index);
 
 private:
-    uint8_t _button;
+    uint8_t _button; // internal button state
     // uint8_t _configuration_descriptor[41];
 
+    /**
+    * @returns true if there is no error, false otherwise
+    * @param x - X direction joystick axis
+    * @param y -  Y direction joystick axis
+    * @param buttons - 1 byte representing state of 6 buttons with LSB
+    * @param z - Z direction of joystick axis
+    * @param rx - X rotation direction of joystick axis
+    */
     bool gamepad_send(int8_t x, int8_t y, uint8_t buttons, int8_t z, int8_t rx);
 
 };
