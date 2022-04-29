@@ -26,6 +26,10 @@ Sparkfun USB Mini-B Breakout:
 
 ## Wiring
 
+Schematic: 
+
+![image](https://user-images.githubusercontent.com/55115625/165983941-f9643c9e-1dd2-449a-a8ab-b2ed4681e0cf.png)
+
 Sparkfun Thumb Joystick:
 
 ![wiring](https://user-images.githubusercontent.com/55115625/165156106-d178d4de-5bc2-4867-8c88-ae914498e4c1.JPG)
@@ -37,10 +41,6 @@ Sparkfun USB Mini-B Breakout:
 Pushbuttons:
 
 ![image](https://user-images.githubusercontent.com/55115625/163015386-f72815b7-37fd-4497-9429-6f359b494cf6.png)
-
-Schematic: 
-
-![image](https://user-images.githubusercontent.com/55115625/165983941-f9643c9e-1dd2-449a-a8ab-b2ed4681e0cf.png)
 
 ## Software
 
