@@ -91,6 +91,11 @@ It describes a device meant for a general desktop, that acts as a gamepad with 6
 This driver code is defined in `USBGamepad.h` and `USBGamepad.cpp`. The constructor defines a generic USB HID device and connects to
 the host device. The `gamepad_send()` method is used to send the *reports* to the host device.
 
+Below are some reference links that assisted us in making the descriptor
+
+* [Custom HID Controller with a Teensy](https://blog.hamaluik.ca/posts/making-a-custom-teensy3-hid-joystick/)
+* [Arduino SNES Controller](https://learn.adafruit.com/usb-snes-gamepad/introducing-the-teensy-with-hid)
+
 ### Example
 
 The example code itself is a sample implementation that utilizes the driver code with our hardware peripherals.
