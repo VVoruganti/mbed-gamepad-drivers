@@ -38,6 +38,10 @@ Pushbuttons:
 
 ![image](https://user-images.githubusercontent.com/55115625/163015386-f72815b7-37fd-4497-9429-6f359b494cf6.png)
 
+Schematic: 
+
+![image](https://user-images.githubusercontent.com/55115625/165983941-f9643c9e-1dd2-449a-a8ab-b2ed4681e0cf.png)
+
 ## Software
 
 The software for this project is split between two parts: The driver code (`USBGamepad.h` and `USBGamepad.cpp`) 
